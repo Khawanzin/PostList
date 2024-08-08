@@ -1,23 +1,32 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect } from "react";
+import axios from 'axios'
+import PostList from "./components/PostList";
+import PostDetail from "./components/PostDetail";
+
 
 function App() {
+  const [posts, setPosts] = useState([])
+  const [selectedPost, setSelectedPost] = useState(null)
+  
+useEffect(()=>{
+  const fetchPosts = async () =>{
+    try{
+      const res = await axios.get('https://jsonplaceholder.typicode.com/posts')
+      setPosts(res.data)
+    } catch(e){
+      console.log(e, 'erro ao renderizar posts')
+    }
+  }
+  fetchPosts()
+}, [])
+
+const handleSelectPost = (post) =>{
+  setSelectedPost(post)
+}
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <PostList posts={posts} onSelectPost={handleSelectPost}/>
+      <PostDetail post={selectedPost}/>
     </div>
   );
 }
